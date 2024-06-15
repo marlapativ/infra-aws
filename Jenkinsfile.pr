@@ -1,0 +1,35 @@
+pipeline {
+    agent any
+    stages {
+        stage('pr validations') {
+            parallel {
+                stage('pr commit messages lint') {
+                    tools {
+                        nodejs "nodejs"
+                    }
+                    steps {
+                        sh '''
+                            export CHANGE_TARGET_COMMIT_ID=$(git rev-parse origin/$CHANGE_TARGET)
+                            npx commitlint \
+                                -x @commitlint/config-conventional \
+                                -f $CHANGE_TARGET_COMMIT_ID
+                        '''
+                    }
+                }
+
+                stage('terraform validate') {
+                    tools {
+                        terraform "terraform"
+                    }
+                    steps {
+                        sh '''
+                            terraform init
+                            terraform fmt -check
+                            terraform validate
+                        '''
+                    }
+                }
+            }
+        }
+    }
+}
