@@ -57,7 +57,7 @@ resource "aws_route_table_association" "public_routes" {
 
 resource "aws_default_network_acl" "cluster" {
   default_network_acl_id = aws_vpc.cluster.default_network_acl_id
-  subnet_ids             = [aws_subnet.cluster.id]
+  subnet_ids             = flatten([aws_subnet.public[*].id, aws_subnet.private[*].id])
 
   dynamic "ingress" {
     for_each = var.network_acl_ingress
