@@ -62,16 +62,24 @@ variable "network_acl_egress" {
 
 variable "eks_cluster" {
   type = object({
-    name     = string
-    version  = string
-    ami_type = string
+    name                    = string
+    version                 = string
+    ami_type                = string
+    authentication_mode     = optional(string, "API_AND_CONFIG_MAP")
+    endpoint_public_access  = optional(bool, true)
+    endpoint_private_access = optional(bool, true)
     node_groups = list(object({
       name           = string
       ami_type       = optional(string)
-      instance_types = optional(list(string), ["c3.medium"])
+      capacity_type  = optional(string, "ON_DEMAND")
+      instance_types = optional(list(string), ["c3.large"])
       min_size       = optional(number, 3)
       max_size       = optional(number, 6)
       desired_size   = optional(number, 6)
+      update_config  = optional(object({
+        max_unavailable = optional(number, 1)
+        max_surge       = optional(number, null)
+      }))
     }))
   })
 }
