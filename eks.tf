@@ -23,6 +23,7 @@ module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "20.14.0"
 
+  // EKS Cluster authentication
   authentication_mode = var.eks_cluster.authentication_mode
 
   // EKS Cluster configuration
@@ -30,6 +31,7 @@ module "eks" {
   cluster_version                 = var.eks_cluster.version
   cluster_endpoint_public_access  = var.eks_cluster.endpoint_public_access
   cluster_endpoint_private_access = var.eks_cluster.endpoint_private_access
+  cluster_ip_family               = var.eks_cluster.ip_family
 
   // KMS Symmetric Secretes encryption Keys
   create_kms_key                = true
@@ -61,13 +63,7 @@ module "eks" {
   }
 
   // EKS Cluster logging configuration
-  cluster_enabled_log_types = [
-    "api",
-    "audit",
-    "authenticator",
-    "controllerManager",
-    "scheduler"
-  ]
+  cluster_enabled_log_types = var.eks_cluster.log_types
 
   enable_cluster_creator_admin_permissions = true
 
