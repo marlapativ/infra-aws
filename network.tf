@@ -1,3 +1,4 @@
+// Networking
 resource "aws_vpc" "cluster" {
   cidr_block = var.vpc_cidr_range
 
