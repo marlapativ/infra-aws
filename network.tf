@@ -8,10 +8,11 @@ resource "aws_vpc" "cluster" {
 }
 
 resource "aws_subnet" "private" {
-  count             = length(var.private_subnets)
-  vpc_id            = aws_vpc.cluster.id
-  cidr_block        = var.private_subnets[count.index].cidr_range
-  availability_zone = var.private_subnets[count.index].zone
+  count                   = length(var.private_subnets)
+  vpc_id                  = aws_vpc.cluster.id
+  cidr_block              = var.private_subnets[count.index].cidr_range
+  availability_zone       = var.private_subnets[count.index].zone
+  map_public_ip_on_launch = false
 
   tags = {
     Name = var.private_subnets[count.index].name
@@ -19,10 +20,11 @@ resource "aws_subnet" "private" {
 }
 
 resource "aws_subnet" "public" {
-  count             = length(var.public_subnets)
-  vpc_id            = aws_vpc.cluster.id
-  cidr_block        = var.public_subnets[count.index].cidr_range
-  availability_zone = var.public_subnets[count.index].zone
+  count                   = length(var.public_subnets)
+  vpc_id                  = aws_vpc.cluster.id
+  cidr_block              = var.public_subnets[count.index].cidr_range
+  availability_zone       = var.public_subnets[count.index].zone
+  map_public_ip_on_launch = true
 
   tags = {
     Name = var.public_subnets[count.index].name

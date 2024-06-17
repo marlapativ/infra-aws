@@ -60,6 +60,11 @@ variable "network_acl_egress" {
   }))
 }
 
+// TODO: Implement security groups
+variable "security_group_name" {
+  type = string
+}
+
 variable "eks_cluster" {
   type = object({
     name                    = string
