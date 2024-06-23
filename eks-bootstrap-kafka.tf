@@ -20,6 +20,6 @@ resource "helm_release" "kafka" {
       value = set.value
     }
   }
-  
+
   depends_on = [kubernetes_namespace.kafka]
 }
