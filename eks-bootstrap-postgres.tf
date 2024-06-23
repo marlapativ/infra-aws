@@ -29,15 +29,17 @@ resource "helm_release" "postgresql" {
     }
   }
 
-  dynamic "set_sensitive" {
-    for_each = var.eks_bootstrap_postgresql_sensitive_values
-    content {
-      name  = set_sensitive.key
-      value = set_sensitive.value
-    }
+  set_sensitive {
+    name  = "postgres.db.username"
+    value = var.eks_bootstrap_postgresql_sensitive_values.username
   }
 
-  set {
+  set_sensitive {
+    name  = "postgres.db.database"
+    value = var.eks_bootstrap_postgresql_sensitive_values.database
+  }
+
+  set_sensitive {
     name  = "postgres.db.password"
     value = random_password.database_password.result
   }
