@@ -7,11 +7,11 @@ resource "kubernetes_namespace" "postgresql" {
 }
 
 resource "random_password" "database_password" {
-  length           = 24
-  special          = false
-  upper            = true
-  numeric          = true
-  lower            = true
+  length  = 24
+  special = false
+  upper   = true
+  numeric = true
+  lower   = true
 }
 
 resource "helm_release" "postgresql" {
@@ -32,8 +32,8 @@ resource "helm_release" "postgresql" {
   dynamic "set_sensitive" {
     for_each = var.eks_bootstrap_postgresql_sensitive_values
     content {
-      name  = set.key
-      value = set.value
+      name  = set_sensitive.key
+      value = set_sensitive.value
     }
   }
 

@@ -218,25 +218,25 @@ variable "ebs" {
 
 variable "eks_bootstrap_postgresql" {
   type = object({
-    name             = string
-    namespace        = optional(string, "postgresql")
-    repository       = optional(string, "https://charts.bitnami.com/bitnami")
-    chart            = optional(string, "postgresql")
-    values           = optional(map(string), {})
+    name       = string
+    namespace  = optional(string, "postgresql")
+    repository = optional(string, "https://charts.bitnami.com/bitnami")
+    chart      = optional(string, "postgresql")
+    values     = optional(map(string), {})
   })
 }
 
 variable "eks_bootstrap_postgresql_sensitive_values" {
   sensitive = true
-  type = optional(map(string), {})
+  type      = optional(map(string), {})
 }
 
 variable "eks_bootstrap_kafka" {
   type = object({
-    name             = string
-    namespace        = optional(string, "kafka")
-    repository       = optional(string, "https://charts.bitnami.com/bitnami")
-    chart            = optional(string, "kafka")
-    values           = optional(map(string), {})
+    name       = string
+    namespace  = optional(string, "kafka")
+    repository = optional(string, "https://charts.bitnami.com/bitnami")
+    chart      = optional(string, "kafka")
+    values     = optional(map(string), {})
   })
 }
