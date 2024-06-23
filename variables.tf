@@ -216,9 +216,23 @@ variable "ebs" {
   })
 }
 
+variable "eks_storage_class" {
+  type = object({
+    storage_class_name  = optional(string, "gp3")
+    storage_provisioner = optional(string, "ebs.csi.aws.com")
+    reclaim_policy      = optional(string, "Delete")
+    volume_binding_mode = optional(string, "WaitForFirstConsumer")
+    parameters = optional(map(string), {
+      "type" : "gp3"
+      "csi.storage.k8s.io/fstype" : "ext4"
+    })
+  })
+}
+
 variable "eks_bootstrap_postgresql" {
   type = object({
     name       = string
+    version    = optional(string, "15.5.9")
     namespace  = optional(string, "postgresql")
     repository = optional(string, "https://charts.bitnami.com/bitnami")
     chart      = optional(string, "postgresql")
@@ -237,6 +251,7 @@ variable "eks_bootstrap_postgresql_sensitive_values" {
 variable "eks_bootstrap_kafka" {
   type = object({
     name       = string
+    version    = optional(string, "29.3.4")
     namespace  = optional(string, "kafka")
     repository = optional(string, "https://charts.bitnami.com/bitnami")
     chart      = optional(string, "kafka")
