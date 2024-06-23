@@ -228,7 +228,10 @@ variable "eks_bootstrap_postgresql" {
 
 variable "eks_bootstrap_postgresql_sensitive_values" {
   sensitive = true
-  type      = optional(map(string), {})
+  type = object({
+    username = string
+    database = string
+  })
 }
 
 variable "eks_bootstrap_kafka" {
