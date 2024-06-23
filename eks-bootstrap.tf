@@ -3,18 +3,19 @@ provider "kubernetes" {
   cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
 }
 
+provider "helm" {
+  kubernetes {
+    cluster_ca_certificate = module.eks.cluster_certificate_authority_data
+    host                   = module.eks.cluster_endpoint
+  }
+}
+
 resource "kubernetes_namespace" "processor" {
   provider = kubernetes
   metadata {
     name = "processor"
   }
-}
-
-resource "kubernetes_namespace" "kafka" {
-  provider = kubernetes
-  metadata {
-    name = "kafka"
-  }
+  depends_on = [module.eks]
 }
 
 resource "kubernetes_namespace" "consumer" {
@@ -22,11 +23,5 @@ resource "kubernetes_namespace" "consumer" {
   metadata {
     name = "consumer"
   }
-}
-
-resource "kubernetes_namespace" "database" {
-  provider = kubernetes
-  metadata {
-    name = "database"
-  }
+  depends_on = [module.eks]
 }
