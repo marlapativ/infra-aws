@@ -14,9 +14,24 @@ resource "random_password" "database_password" {
   lower   = true
 }
 
+resource "kubernetes_storage_class" "database_storage_class" {
+  provider = kubernetes
+  metadata {
+    name = var.eks_storage_class.storage_class_name
+  }
+  storage_provisioner = var.eks_storage_class.storage_provisioner
+  reclaim_policy      = var.eks_storage_class.reclaim_policy
+  volume_binding_mode = var.eks_storage_class.volume_binding_mode
+  parameters = merge(var.eks_storage_class.parameters, {
+    "kmsKeyId" : module.kms_ebs.key_arn
+    "encrypted" : "true"
+  })
+}
+
 resource "helm_release" "postgresql" {
   provider   = helm
   name       = var.eks_bootstrap_postgresql.name
+  version    = var.eks_bootstrap_postgresql.version
   repository = var.eks_bootstrap_postgresql.repository
   chart      = var.eks_bootstrap_postgresql.chart
   namespace  = kubernetes_namespace.postgresql.metadata.0.name
@@ -30,19 +45,24 @@ resource "helm_release" "postgresql" {
   }
 
   set_sensitive {
-    name  = "postgres.db.username"
+    name  = "global.postgresql.auth.username"
     value = var.eks_bootstrap_postgresql_sensitive_values.username
   }
 
   set_sensitive {
-    name  = "postgres.db.database"
+    name  = "global.postgresql.auth.database"
     value = var.eks_bootstrap_postgresql_sensitive_values.database
   }
 
   set_sensitive {
-    name  = "postgres.db.password"
+    name  = "global.postgresql.auth.password"
     value = random_password.database_password.result
   }
 
-  depends_on = [kubernetes_namespace.postgresql, random_password.database_password]
+  set {
+    name  = "global.storageClass"
+    value = kubernetes_storage_class.database_storage_class.metadata.0.name
+  }
+
+  depends_on = [kubernetes_namespace.postgresql, random_password.database_password, kubernetes_storage_class.database_storage_class]
 }
