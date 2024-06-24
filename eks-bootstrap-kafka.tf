@@ -22,5 +22,5 @@ resource "helm_release" "kafka" {
     }
   }
 
-  depends_on = [kubernetes_namespace.kafka]
+  depends_on = [kubernetes_namespace.kafka, module.eks.cluster_name]
 }
