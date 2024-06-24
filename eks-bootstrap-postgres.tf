@@ -64,5 +64,10 @@ resource "helm_release" "postgresql" {
     value = kubernetes_storage_class.database_storage_class.metadata.0.name
   }
 
-  depends_on = [kubernetes_namespace.postgresql, random_password.database_password, kubernetes_storage_class.database_storage_class]
+  depends_on = [
+    kubernetes_namespace.postgresql,
+    random_password.database_password,
+    kubernetes_storage_class.database_storage_class,
+    module.eks.cluster_name
+  ]
 }
