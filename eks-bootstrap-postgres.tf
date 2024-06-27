@@ -1,3 +1,7 @@
+locals {
+  postgres_values_files = [for file_path in var.eks_bootstrap_postgresql.values_file_paths : "${file(file_path)}"]
+}
+
 resource "kubernetes_namespace" "postgresql" {
   provider = kubernetes
   metadata {
@@ -14,20 +18,6 @@ resource "random_password" "database_password" {
   lower   = true
 }
 
-resource "kubernetes_storage_class" "database_storage_class" {
-  provider = kubernetes
-  metadata {
-    name = var.eks_storage_class.storage_class_name
-  }
-  storage_provisioner = var.eks_storage_class.storage_provisioner
-  reclaim_policy      = var.eks_storage_class.reclaim_policy
-  volume_binding_mode = var.eks_storage_class.volume_binding_mode
-  parameters = merge(var.eks_storage_class.parameters, {
-    "kmsKeyId" : module.kms_ebs.key_arn
-    "encrypted" : "true"
-  })
-}
-
 resource "helm_release" "postgresql" {
   provider   = helm
   name       = var.eks_bootstrap_postgresql.name
@@ -35,6 +25,8 @@ resource "helm_release" "postgresql" {
   repository = var.eks_bootstrap_postgresql.repository
   chart      = var.eks_bootstrap_postgresql.chart
   namespace  = kubernetes_namespace.postgresql.metadata.0.name
+
+  values = local.postgres_values_files
 
   dynamic "set" {
     for_each = var.eks_bootstrap_postgresql.values
@@ -61,13 +53,13 @@ resource "helm_release" "postgresql" {
 
   set {
     name  = "global.storageClass"
-    value = kubernetes_storage_class.database_storage_class.metadata.0.name
+    value = kubernetes_storage_class.ebs.metadata.0.name
   }
 
   depends_on = [
     kubernetes_namespace.postgresql,
     random_password.database_password,
-    kubernetes_storage_class.database_storage_class,
+    kubernetes_storage_class.ebs,
     module.eks.cluster_name
   ]
 }

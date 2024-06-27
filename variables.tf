@@ -236,7 +236,8 @@ variable "eks_bootstrap_postgresql" {
     namespace  = optional(string, "postgresql")
     repository = optional(string, "https://charts.bitnami.com/bitnami")
     chart      = optional(string, "postgresql")
-    values     = optional(map(string), {})
+    values            = optional(map(string), {})
+    values_file_paths = optional(list(string), [])
   })
 }
 
@@ -255,6 +256,14 @@ variable "eks_bootstrap_kafka" {
     namespace  = optional(string, "kafka")
     repository = optional(string, "https://charts.bitnami.com/bitnami")
     chart      = optional(string, "kafka")
-    values     = optional(map(string), {})
+    values            = optional(map(string), {})
+    values_file_paths = optional(list(string), [])
+  })
+}
+
+variable "eks_bootstrap_kafka_sensitive_values" {
+  sensitive = true
+  type = object({
+    username = string
   })
 }
