@@ -14,7 +14,7 @@ resource "kubernetes_storage_class" "ebs" {
 
 resource "kubernetes_namespace" "namespaces" {
   provider = kubernetes
-  count = length(var.eks_namespaces)
+  count    = length(var.eks_namespaces)
 
   metadata {
     name = var.eks_namespaces[count.index]
