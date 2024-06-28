@@ -267,3 +267,8 @@ variable "eks_bootstrap_kafka_sensitive_values" {
     username = string
   })
 }
+
+variable "eks_namespaces" {
+  type = list(string)
+  default = ["processor", "consumer"]
+}
