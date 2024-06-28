@@ -1,25 +1,3 @@
-provider "kubernetes" {
-  host                   = module.eks.cluster_endpoint
-  cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
-  exec {
-    api_version = "client.authentication.k8s.io/v1beta1"
-    args        = ["eks", "get-token", "--cluster-name", module.eks.cluster_name]
-    command     = "aws"
-  }
-}
-
-provider "helm" {
-  kubernetes {
-    host                   = module.eks.cluster_endpoint
-    cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
-    exec {
-      api_version = "client.authentication.k8s.io/v1beta1"
-      args        = ["eks", "get-token", "--cluster-name", module.eks.cluster_name]
-      command     = "aws"
-    }
-  }
-}
-
 resource "kubernetes_storage_class" "ebs" {
   provider = kubernetes
   metadata {
@@ -34,18 +12,12 @@ resource "kubernetes_storage_class" "ebs" {
   })
 }
 
-resource "kubernetes_namespace" "processor" {
+resource "kubernetes_namespace" "namespaces" {
   provider = kubernetes
-  metadata {
-    name = "processor"
-  }
-  depends_on = [module.eks]
-}
+  count = length(var.eks_namespaces)
 
-resource "kubernetes_namespace" "consumer" {
-  provider = kubernetes
   metadata {
-    name = "consumer"
+    name = var.eks_namespaces[count.index]
   }
   depends_on = [module.eks]
 }
