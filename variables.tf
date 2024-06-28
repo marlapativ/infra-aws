@@ -269,6 +269,24 @@ variable "eks_bootstrap_kafka_sensitive_values" {
 }
 
 variable "eks_namespaces" {
-  type = list(string)
+  type    = list(string)
   default = ["processor", "consumer"]
+}
+
+variable "password_defaults" {
+  type = object({
+    upper   = optional(bool, true)
+    lower   = optional(bool, true)
+    numeric = optional(bool, true)
+    special = optional(bool, false)
+    length  = optional(number, 24)
+  })
+
+  default = {
+    upper   = true
+    lower   = true
+    numeric = true
+    special = false
+    length  = 24
+  }
 }
