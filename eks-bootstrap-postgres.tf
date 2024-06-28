@@ -11,11 +11,11 @@ resource "kubernetes_namespace" "postgresql" {
 }
 
 resource "random_password" "database_password" {
-  length  = 24
-  special = false
-  upper   = true
-  numeric = true
-  lower   = true
+  length  = var.password_defaults.length
+  special = var.password_defaults.special
+  upper   = var.password_defaults.upper
+  numeric = var.password_defaults.numeric
+  lower   = var.password_defaults.lower
 }
 
 resource "helm_release" "postgresql" {
