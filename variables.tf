@@ -231,11 +231,11 @@ variable "eks_storage_class" {
 
 variable "eks_bootstrap_postgresql" {
   type = object({
-    name       = string
-    version    = optional(string, "15.5.9")
-    namespace  = optional(string, "postgresql")
-    repository = optional(string, "https://charts.bitnami.com/bitnami")
-    chart      = optional(string, "postgresql")
+    name              = string
+    version           = optional(string, "15.5.9")
+    namespace         = optional(string, "postgresql")
+    repository        = optional(string, "https://charts.bitnami.com/bitnami")
+    chart             = optional(string, "postgresql")
     values            = optional(map(string), {})
     values_file_paths = optional(list(string), [])
   })
@@ -251,11 +251,11 @@ variable "eks_bootstrap_postgresql_sensitive_values" {
 
 variable "eks_bootstrap_kafka" {
   type = object({
-    name       = string
-    version    = optional(string, "29.3.4")
-    namespace  = optional(string, "kafka")
-    repository = optional(string, "https://charts.bitnami.com/bitnami")
-    chart      = optional(string, "kafka")
+    name              = string
+    version           = optional(string, "29.3.4")
+    namespace         = optional(string, "kafka")
+    repository        = optional(string, "https://charts.bitnami.com/bitnami")
+    chart             = optional(string, "kafka")
     values            = optional(map(string), {})
     values_file_paths = optional(list(string), [])
   })
