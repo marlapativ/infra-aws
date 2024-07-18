@@ -51,6 +51,11 @@ resource "helm_release" "postgresql" {
     value = random_password.database_password.result
   }
 
+  set_sensitive {
+    name  = "global.imagePullSecrets[0]"
+    value = kubernetes_secret.postgresql.metadata.0.name
+  }
+
   set {
     name  = "global.storageClass"
     value = kubernetes_storage_class.ebs.metadata.0.name
@@ -85,4 +90,16 @@ resource "kubernetes_limit_range" "postgresql" {
       }
     }
   }
+}
+
+resource "kubernetes_secret" "postgresql" {
+  provider = kubernetes
+  metadata {
+    name      = "${kubernetes_namespace.postgresql.metadata.0.name}-dockerhub-secrets"
+    namespace = kubernetes_namespace.postgresql.metadata.0.name
+  }
+  data = {
+    ".dockerconfigjson" = var.eks_bootstrap_secrets.dockerhubconfigjson
+  }
+  depends_on = [kubernetes_namespace.postgresql]
 }

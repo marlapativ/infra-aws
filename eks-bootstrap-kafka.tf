@@ -10,6 +10,18 @@ resource "kubernetes_namespace" "kafka" {
   depends_on = [module.eks]
 }
 
+resource "kubernetes_secret" "kafka" {
+  provider = kubernetes
+  metadata {
+    name      = "${kubernetes_namespace.kafka.metadata.0.name}-dockerhub-secrets"
+    namespace = kubernetes_namespace.kafka.metadata.0.name
+  }
+  data = {
+    ".dockerconfigjson" = var.eks_bootstrap_secrets.dockerhubconfigjson
+  }
+  depends_on = [kubernetes_namespace.kafka]
+}
+
 resource "random_password" "kafka_password" {
   length  = var.password_defaults.length
   special = var.password_defaults.special
@@ -39,6 +51,11 @@ resource "helm_release" "kafka" {
   set {
     name  = "global.storageClass"
     value = kubernetes_storage_class.ebs.metadata.0.name
+  }
+
+  set_sensitive {
+    name  = "global.imagePullSecrets[0]"
+    value = kubernetes_secret.kafka.metadata.0.name
   }
 
   set_list {

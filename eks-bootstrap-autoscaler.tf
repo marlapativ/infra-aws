@@ -10,6 +10,18 @@ resource "kubernetes_namespace" "autoscaler" {
   depends_on = [module.eks]
 }
 
+resource "kubernetes_secret" "autoscaler" {
+  provider = kubernetes
+  metadata {
+    name      = "${kubernetes_namespace.autoscaler.metadata.0.name}-dockerhub-secrets"
+    namespace = kubernetes_namespace.autoscaler.metadata.0.name
+  }
+  data = {
+    ".dockerconfigjson" = var.eks_bootstrap_secrets.dockerhubconfigjson
+  }
+  depends_on = [kubernetes_namespace.autoscaler]
+}
+
 resource "helm_release" "autoscaler" {
   provider   = helm
   name       = var.eks_bootstrap_autoscaler.name
@@ -75,6 +87,11 @@ resource "helm_release" "autoscaler" {
   set {
     name  = "cluster-autoscaler.extraArgs.balance-similar-node-groups"
     value = true
+  }
+
+  set_sensitive {
+    name  = "image.pullSecrets[0]"
+    value = kubernetes_secret.autoscaler.metadata.0.name
   }
 
   depends_on = [

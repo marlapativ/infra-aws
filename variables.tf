@@ -329,13 +329,6 @@ variable "eks_bootstrap_consumer" {
   })
 }
 
-variable "eks_bootstrap_consumer_sensitive_values" {
-  sensitive = true
-  type = object({
-    dockerhubconfigjson = string
-  })
-}
-
 variable "eks_bootstrap_postgresql_limit_range" {
   type = list(object({
     type            = string
@@ -456,4 +449,11 @@ variable "eks_bootstrap_processor_limit_range" {
       memory = "256Mi"
     }
   }]
+}
+
+variable "eks_bootstrap_secrets" {
+  sensitive = true
+  type = object({
+    dockerhubconfigjson = string
+  })
 }
