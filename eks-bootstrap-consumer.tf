@@ -54,7 +54,7 @@ resource "helm_release" "consumer" {
 
   set_sensitive {
     name  = "secrets.dockerhubconfigjson"
-    value = var.eks_bootstrap_consumer_sensitive_values.dockerhubconfigjson
+    value = var.eks_bootstrap_secrets.dockerhubconfigjson
   }
 
   depends_on = [kubernetes_namespace.consumer, helm_release.kafka, helm_release.postgresql]
