@@ -457,3 +457,25 @@ variable "eks_bootstrap_secrets" {
     dockerhubconfigjson = string
   })
 }
+
+variable "helm_provider_registry" {
+  type = object({
+    url      = string
+    username = string
+    password = string
+  })
+  sensitive = true
+}
+
+
+variable "eks_bootstrap_operator" {
+  type = object({
+    name              = string
+    version           = optional(string, "1.3.0")
+    namespace         = optional(string, "processor")
+    repository        = optional(string, "oci://registry-1.docker.io/marlapativ")
+    chart             = optional(string, "helm-cve-operator")
+    values            = optional(map(string), {})
+    values_file_paths = optional(list(string), [])
+  })
+}

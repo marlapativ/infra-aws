@@ -36,4 +36,10 @@ provider "helm" {
       command     = "aws"
     }
   }
+
+  registry {
+    url      = var.helm_provider_registry.url
+    username = var.helm_provider_registry.username
+    password = var.helm_provider_registry.password
+  }
 }

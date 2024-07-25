@@ -1,5 +1,5 @@
 locals {
-  processor_values_files = [for file_path in var.eks_bootstrap_processor.values_file_paths : "${file(file_path)}"]
+  operator_values_files = [for file_path in var.eks_bootstrap_operator.values_file_paths : "${file(file_path)}"]
 }
 
 resource "kubernetes_namespace" "processor" {
@@ -30,3 +30,45 @@ resource "kubernetes_limit_range" "processor" {
     }
   }
 }
+
+resource "helm_release" "cve_operator" {
+  provider   = helm
+  name       = var.eks_bootstrap_operator.name
+  version    = var.eks_bootstrap_operator.version
+  repository = var.eks_bootstrap_operator.repository
+  chart      = var.eks_bootstrap_operator.chart
+  namespace  = kubernetes_namespace.processor.metadata.0.name
+
+  values = local.operator_values_files
+
+  dynamic "set" {
+    for_each = var.eks_bootstrap_operator.values
+    content {
+      name  = set.key
+      value = set.value
+    }
+  }
+
+  set_sensitive {
+    name  = "secrets.dockerhubconfigjson"
+    value = var.eks_bootstrap_secrets.dockerhubconfigjson
+  }
+
+  set_sensitive {
+    name  = "githubReleasesMonitor.githubReleaseJob.kafka.secrets.username"
+    value = base64encode(var.eks_bootstrap_kafka_sensitive_values.username)
+  }
+
+  set_sensitive {
+    name  = "githubReleasesMonitor.githubReleaseJob.kafka.secrets.password"
+    value = base64encode(random_password.kafka_password.result)
+  }
+
+  depends_on = [
+    module.eks.cluster_name,
+    helm_release.postgresql,
+    helm_release.kafka,
+    helm_release.autoscaler
+  ]
+}
+
