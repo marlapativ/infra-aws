@@ -346,7 +346,7 @@ variable "eks_bootstrap_postgresql_limit_range" {
     }
     default_request = {
       cpu    = "500m"
-      memory = "1024Mi"
+      memory = "1Gi"
     }
   }]
 }
@@ -363,8 +363,8 @@ variable "eks_bootstrap_kafka_limit_range" {
   default = [{
     type = "Container"
     default = {
-      cpu    = "1.0"
-      memory = "2048Mi"
+      cpu    = "1"
+      memory = "2Gi"
     }
     default_request = {
       cpu    = "750m"

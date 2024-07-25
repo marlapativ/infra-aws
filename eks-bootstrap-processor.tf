@@ -100,7 +100,8 @@ resource "helm_release" "processor" {
     module.eks.cluster_name,
     helm_release.postgresql,
     helm_release.kafka,
-    helm_release.autoscaler
+    helm_release.autoscaler,
+    helm_release.cve_operator
   ]
 }
 
