@@ -420,7 +420,7 @@ variable "eks_bootstrap_autoscaler_limit_range" {
 variable "eks_bootstrap_processor" {
   type = object({
     name              = string
-    version           = optional(string, )
+    version           = optional(string, null)
     namespace         = optional(string, "processor")
     repository        = optional(string, null)
     chart             = optional(string, null)
