@@ -467,7 +467,6 @@ variable "helm_provider_registry" {
   sensitive = true
 }
 
-
 variable "eks_bootstrap_operator" {
   type = object({
     name              = string
@@ -475,6 +474,66 @@ variable "eks_bootstrap_operator" {
     namespace         = optional(string, "processor")
     repository        = optional(string, "oci://registry-1.docker.io/marlapativ")
     chart             = optional(string, "helm-cve-operator")
+    values            = optional(map(string), {})
+    values_file_paths = optional(list(string), [])
+  })
+}
+
+variable "eks_bootstrap_istiod" {
+  type = object({
+    name              = string
+    version           = optional(string, null)
+    namespace         = optional(string, "istio-system")
+    repository        = optional(string, null)
+    chart             = string
+    values            = optional(map(string), {})
+    values_file_paths = optional(list(string), [])
+  })
+}
+
+variable "eks_bootstrap_istio_base" {
+  type = object({
+    name              = string
+    version           = optional(string, null)
+    namespace         = optional(string, "istio-system")
+    repository        = optional(string, null)
+    chart             = string
+    values            = optional(map(string), {})
+    values_file_paths = optional(list(string), [])
+  })
+}
+
+variable "eks_bootstrap_istio_gateway" {
+  type = object({
+    name              = string
+    version           = optional(string, null)
+    namespace         = optional(string, "istio-system")
+    repository        = optional(string, null)
+    chart             = string
+    values            = optional(map(string), {})
+    values_file_paths = optional(list(string), [])
+  })
+}
+
+variable "eks_bootstrap_prometheus" {
+  type = object({
+    name              = string
+    version           = optional(string, null)
+    namespace         = optional(string, "operations")
+    repository        = optional(string, null)
+    chart             = string
+    values            = optional(map(string), {})
+    values_file_paths = optional(list(string), [])
+  })
+}
+
+variable "eks_bootstrap_grafana" {
+  type = object({
+    name              = string
+    version           = optional(string, null)
+    namespace         = optional(string, "operations")
+    repository        = optional(string, null)
+    chart             = string
     values            = optional(map(string), {})
     values_file_paths = optional(list(string), [])
   })
