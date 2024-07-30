@@ -6,6 +6,9 @@ resource "kubernetes_namespace" "postgresql" {
   provider = kubernetes
   metadata {
     name = var.eks_bootstrap_postgresql.namespace
+    labels = {
+      istio-injection = "enabled"
+    }
   }
   depends_on = [module.eks]
 }
@@ -66,7 +69,9 @@ resource "helm_release" "postgresql" {
     random_password.database_password,
     kubernetes_storage_class.ebs,
     module.eks.cluster_name,
-    helm_release.autoscaler
+    helm_release.autoscaler,
+    helm_release.istiod,
+    helm_release.prometheus,
   ]
 }
 

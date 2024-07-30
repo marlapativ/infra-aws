@@ -7,6 +7,9 @@ resource "kubernetes_namespace" "processor" {
   provider = kubernetes
   metadata {
     name = var.eks_bootstrap_processor.namespace
+    labels = {
+      istio-injection = "enabled"
+    }
   }
 }
 
@@ -59,7 +62,9 @@ resource "helm_release" "cve_operator" {
     module.eks.cluster_name,
     helm_release.postgresql,
     helm_release.kafka,
-    helm_release.autoscaler
+    helm_release.autoscaler,
+    helm_release.istiod,
+    helm_release.prometheus,
   ]
 }
 

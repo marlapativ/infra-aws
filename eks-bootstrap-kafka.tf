@@ -6,6 +6,9 @@ resource "kubernetes_namespace" "kafka" {
   provider = kubernetes
   metadata {
     name = var.eks_bootstrap_kafka.namespace
+    labels = {
+      istio-injection = "enabled"
+    }
   }
   depends_on = [module.eks]
 }
@@ -74,7 +77,9 @@ resource "helm_release" "kafka" {
     kubernetes_storage_class.ebs,
     random_password.kafka_password,
     module.eks.cluster_name,
-    helm_release.autoscaler
+    helm_release.autoscaler,
+    helm_release.istiod,
+    helm_release.prometheus,
   ]
 }
 

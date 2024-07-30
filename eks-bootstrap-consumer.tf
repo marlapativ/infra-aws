@@ -2,6 +2,9 @@ resource "kubernetes_namespace" "consumer" {
   provider = kubernetes
   metadata {
     name = var.eks_bootstrap_consumer.namespace
+    labels = {
+      istio-injection = "enabled"
+    }
   }
 }
 
@@ -57,7 +60,7 @@ resource "helm_release" "consumer" {
     value = var.eks_bootstrap_secrets.dockerhubconfigjson
   }
 
-  depends_on = [kubernetes_namespace.consumer, helm_release.kafka, helm_release.postgresql]
+  depends_on = [kubernetes_namespace.consumer, helm_release.kafka, helm_release.postgresql, helm_release.istiod, helm_release.prometheus]
 }
 
 resource "kubernetes_limit_range" "consumer" {
