@@ -1,0 +1,26 @@
+replicaCount: 5
+db:
+  config:
+    host: 'postgresql.postgresql.svc.cluster.local'
+env:
+  KAFKA_BROKERS: 'kafka-controller-0.kafka-controller-headless.kafka.svc.cluster.local:9092,kafka-controller-1.kafka-controller-headless.kafka.svc.cluster.local:9092,kafka-controller-2.kafka-controller-headless.kafka.svc.cluster.local:9092'
+  KAFKA_TOPIC: 'cve'
+  KAFKA_CONSUMER_GROUP_ID: 'cve'
+resources:
+  limits:
+    cpu: 500m
+    memory: 384Mi
+  requests:
+    cpu: 375m
+    memory: 256Mi
+pod:
+  readinessProbe:
+    path: /readiness
+    failureThreshold: 4
+    successThreshold: 1
+    periodSeconds: 15
+  livenessProbe:
+    path: /liveness
+    failureThreshold: 3
+    successThreshold: 1
+    periodSeconds: 10

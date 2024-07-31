@@ -122,4 +122,6 @@ resource "kubernetes_limit_range" "autoscaler" {
       }
     }
   }
+
+  depends_on = [kubernetes_namespace.autoscaler]
 }

@@ -1,0 +1,26 @@
+primary:
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1024Mi
+      ephemeral-storage: 250Mi
+    limits:
+      cpu: 750m
+      memory: 1536Mi
+      ephemeral-storage: 1024Mi
+  networkPolicy:
+    enabled: true
+    allowExternal: false
+    ingressNSMatchLabels:
+      kubernetes.io/metadata.name: consumer
+    ingressNSPodMatchLabels:
+      app.kubernetes.io/name: cve-consumer
+      app.kubernetes.io/part-of: webapp-cve-consumer
+  extendedConfiguration: |
+    log_destination = 'jsonlog'
+    logging_collector = on
+metrics:
+  enabled: true
+image:
+  repository: marlapativ/postgresql
+  tag: 16.3.0-debian-12-r19

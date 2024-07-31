@@ -3,6 +3,7 @@ resource "kubernetes_namespace" "istio_system" {
   metadata {
     name = var.eks_bootstrap_istiod.namespace
   }
+  depends_on = [kubernetes_namespace.operations]
 }
 
 locals {

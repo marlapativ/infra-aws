@@ -1,0 +1,8 @@
+datasources:
+  secretDefinition:
+    apiVersion: 1
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        url: http://prometheus-kube-prometheus-prometheus.operations.svc.cluster.local:9090
+        isDefault: true
