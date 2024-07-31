@@ -1,0 +1,42 @@
+image:
+  repository: marlapativ/kafka
+  tag: 3.7.1-debian-12-r2
+controller:
+  replicaCount: 3
+  resources:
+    requests:
+      cpu: 750m
+      memory: 1536Mi
+    limits:
+      cpu: '1.0'
+      memory: 1536Mi
+  heapOpts: -Xmx1536m -Xms1536m
+  podAntiAffinityPreset: hard
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: controller-eligible
+              app.kubernetes.io/instance: kafka
+              app.kubernetes.io/name: kafka
+          topologyKey: topology.kubernetes.io/zone
+provisioning:
+  enabled: true
+  numPartitions: 14
+  replicationFactor: 3
+  topics:
+    - name: 'cve'
+  podLabels:
+    sidecar.istio.io/inject: 'false'
+extraConfigYaml:
+  max.request.size: '2000000'
+  message.max.bytes: '1000000'
+  replica.fetch.max.bytes: '2000000'
+kraft:
+  enabled: true
+metrics:
+  kafka:
+    enabled: true
+  jmx:
+    enabled: true

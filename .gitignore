@@ -37,3 +37,7 @@ terraform.rc
 .terraform.lock.hcl
 *.values.yaml
 helm-uninstaller.sh
+
+.DS_Store
+
+!config/**/*

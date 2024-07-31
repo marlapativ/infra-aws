@@ -1,0 +1,16 @@
+pilot:
+  autoscaleEnabled: false
+  traceSampling: 100
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1024Mi
+global:
+  logAsJson: true
+  proxy:
+    resources:
+      requests:
+        cpu: 10m
+        memory: 40Mi
+meshConfig:
+  accessLogFile: /dev/stdout
