@@ -1,4 +1,6 @@
 primary:
+  podlabels:
+    sidecar.istio.io/inject: 'false'
   resources:
     requests:
       cpu: 500m
@@ -16,6 +18,13 @@ primary:
     ingressNSPodMatchLabels:
       app.kubernetes.io/name: cve-consumer
       app.kubernetes.io/part-of: webapp-cve-consumer
+    extraIngress:
+      - ports:
+          - port: '{{ .Values.metrics.containerPorts.metrics }}'
+        from:
+          - namespaceSelector:
+              matchLabels:
+                kubernetes.io/metadata.name: operations
   extendedConfiguration: |
     log_destination = 'jsonlog'
     logging_collector = on
