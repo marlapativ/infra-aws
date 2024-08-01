@@ -69,6 +69,8 @@ module "aws_load_balancer_controller" {
   cluster_endpoint  = module.eks.cluster_endpoint
   cluster_version   = module.eks.cluster_version
   oidc_provider_arn = module.eks.oidc_provider_arn
+
+  enable_aws_load_balancer_controller = true
   aws_load_balancer_controller = {
     set = [{
       name  = "vpcId"
@@ -77,8 +79,6 @@ module "aws_load_balancer_controller" {
 
     wait = true
   }
-
-  enable_aws_load_balancer_controller = true
 
   enable_cert_manager                   = true
   cert_manager_route53_hosted_zone_arns = var.eks_bootstrap_operations.route53_hosted_zone_arns
@@ -89,6 +89,11 @@ module "aws_load_balancer_controller" {
   external_dns                   = var.eks_bootstrap_operations.external_dns
 
   depends_on = [helm_release.istiod]
+}
+
+resource "time_sleep" "wait_for_load_balancer_controller" {
+  depends_on = [module.aws_load_balancer_controller]
+  create_duration = "30s"
 }
 
 resource "helm_release" "istio_gateway" {
@@ -109,5 +114,5 @@ resource "helm_release" "istio_gateway" {
     }
   }
 
-  depends_on = [module.aws_load_balancer_controller, kubernetes_namespace.istio_system, helm_release.istio_base, helm_release.istiod]
+  depends_on = [time_sleep.wait_for_load_balancer_controller, module.aws_load_balancer_controller, kubernetes_namespace.istio_system, helm_release.istio_base, helm_release.istiod]
 }
