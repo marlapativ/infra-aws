@@ -551,6 +551,18 @@ variable "eks_bootstrap_fluentbit" {
   })
 }
 
+variable "eks_bootstrap_cluster_operations" {
+  type = object({
+    name              = string
+    version           = optional(string, null)
+    namespace         = optional(string, "operations")
+    repository        = optional(string, null)
+    chart             = string
+    values            = optional(map(string), {})
+    values_file_paths = optional(list(string), [])
+  })
+}
+
 variable "fluentbit-iam" {
   type = object({
     create_role                    = optional(bool, true)
