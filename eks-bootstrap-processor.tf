@@ -11,6 +11,11 @@ resource "kubernetes_namespace" "processor" {
       istio-injection = "enabled"
     }
   }
+  depends_on = [
+    module.eks.cluster_name,
+    helm_release.postgresql,
+    helm_release.kafka
+  ]
 }
 
 resource "kubernetes_limit_range" "processor" {

@@ -10,7 +10,7 @@ resource "kubernetes_namespace" "postgresql" {
       istio-injection = "enabled"
     }
   }
-  depends_on = [module.eks]
+  depends_on = [module.eks, time_sleep.wait_for_operations, helm_release.istiod, helm_release.kafka]
 }
 
 resource "random_password" "database_password" {
@@ -70,8 +70,7 @@ resource "helm_release" "postgresql" {
     kubernetes_storage_class.ebs,
     module.eks.cluster_name,
     helm_release.autoscaler,
-    helm_release.istiod,
-    helm_release.prometheus,
+    helm_release.istiod
   ]
 }
 
@@ -95,6 +94,8 @@ resource "kubernetes_limit_range" "postgresql" {
       }
     }
   }
+
+  depends_on = [kubernetes_namespace.postgresql]
 }
 
 resource "kubernetes_secret" "postgresql" {

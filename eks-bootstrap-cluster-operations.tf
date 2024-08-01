@@ -24,11 +24,17 @@ resource "helm_release" "cluster_operations" {
   }
 
   depends_on = [
-    module.aws_load_balancer_controller,
+    helm_release.autoscaler,
+    helm_release.fluentbit,
     helm_release.istio_base,
     helm_release.istiod,
+    module.operations,
     helm_release.istio_gateway,
+    helm_release.kafka,
+    helm_release.postgresql,
     helm_release.prometheus,
-    helm_release.grafana
+    helm_release.grafana,
+    helm_release.consumer,
+    helm_release.processor,
   ]
 }

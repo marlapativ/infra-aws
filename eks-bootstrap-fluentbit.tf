@@ -22,7 +22,7 @@ resource "kubernetes_namespace" "fluentbit" {
   metadata {
     name = var.eks_bootstrap_fluentbit.namespace
   }
-  depends_on = [module.eks]
+  depends_on = [module.eks, helm_release.autoscaler]
 }
 
 resource "helm_release" "fluentbit" {

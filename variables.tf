@@ -612,3 +612,8 @@ variable "domain" {
 variable "email" {
   type = string
 }
+
+variable "wait_duration_aws_load_balancer_controller" {
+  type    = string
+  default = "5m"
+}

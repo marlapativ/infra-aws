@@ -21,7 +21,7 @@ resource "helm_release" "prometheus" {
     }
   }
 
-  depends_on = [kubernetes_namespace.operations]
+  depends_on = [kubernetes_namespace.operations, helm_release.kafka, helm_release.postgresql]
 }
 
 
@@ -43,5 +43,5 @@ resource "helm_release" "grafana" {
     }
   }
 
-  depends_on = [kubernetes_namespace.operations]
+  depends_on = [kubernetes_namespace.operations, helm_release.kafka, helm_release.postgresql, helm_release.prometheus]
 }
