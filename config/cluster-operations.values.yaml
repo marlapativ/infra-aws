@@ -1,0 +1,30 @@
+istio:
+  monitoring:
+    namespace: 'istio-system'
+    namespaceSelector:
+      any: true
+  gateway:
+    namespace: 'istio-system'
+    virtualservice:
+      hosts:
+        - '*'
+      tls:
+        - match:
+            - port: 443
+              sniHosts:
+                - '*'
+          route:
+            - destination:
+                host: grafana.operations.svc.cluster.local
+                port:
+                  number: 3000
+
+certmanager:
+  namespace: 'operations'
+  email:
+    - parichaydidwania@gmail.com
+  # staging: false
+
+certificate:
+  dnsNames:
+    - 'dev.parichaydidwania.site'
