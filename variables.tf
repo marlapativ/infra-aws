@@ -608,3 +608,7 @@ variable "eks_bootstrap_operations" {
 variable "domain" {
   type = string
 }
+
+variable "email" {
+  type = string
+}

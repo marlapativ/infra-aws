@@ -1,3 +1,10 @@
+locals {
+  cluster_operations_values_files = [for file_path in var.eks_bootstrap_cluster_operations.values_file_paths : "${templatefile(file_path, {
+    domain = var.domain,
+    email  = var.email
+  })}"]
+}
+
 resource "helm_release" "cluster_operations" {
   provider   = helm
   name       = var.eks_bootstrap_cluster_operations.name
@@ -6,7 +13,7 @@ resource "helm_release" "cluster_operations" {
   chart      = var.eks_bootstrap_cluster_operations.chart
   namespace  = kubernetes_namespace.istio_system.metadata.0.name
 
-  values = local.istio_gateway_values_files
+  values = local.cluster_operations_values_files
 
   dynamic "set" {
     for_each = var.eks_bootstrap_cluster_operations.values

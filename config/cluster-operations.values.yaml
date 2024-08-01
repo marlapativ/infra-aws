@@ -7,12 +7,12 @@ istio:
     namespace: 'istio-system'
     virtualservice:
       hosts:
-        - '*'
+        - ${domain}
       tls:
         - match:
             - port: 443
               sniHosts:
-                - '*'
+                - ${domain}
           route:
             - destination:
                 host: grafana.operations.svc.cluster.local
@@ -22,9 +22,9 @@ istio:
 certmanager:
   namespace: 'operations'
   email:
-    - parichaydidwania@gmail.com
+    - ${email}
   # staging: false
 
 certificate:
   dnsNames:
-    - 'dev.parichaydidwania.site'
+    - ${domain}
