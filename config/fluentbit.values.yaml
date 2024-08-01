@@ -14,8 +14,8 @@ config:
   inputs: |
     [INPUT]
         Name tail
+        Exclude_Path /var/log/containers/*_istio-proxy*,/var/log/containers/*_istio-init*,/var/log/containers/cloudwatch-agent*,/var/log/containers/fluent-bit*,/var/log/containers/aws-node*,/var/log/containers/kube-proxy*
         Path /var/log/containers/*.log
-        Exclude_Path /var/log/containers/*_istio-proxy*,/var/log/containers/*_istio-init*
         multiline.parser docker, cri
         Tag kube.*
         Mem_Buf_Limit 100MB
@@ -30,11 +30,6 @@ config:
         Keep_Log Off
         K8S-Logging.Parser On
         K8S-Logging.Exclude On
-
-    [FILTER]
-        Name grep
-        Match kube.*
-        Regex $kubernetes['labels']['fluentbit-logs'] true
 
   outputs: |
     [OUTPUT]
