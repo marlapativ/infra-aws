@@ -6,6 +6,11 @@ resource "kubernetes_namespace" "consumer" {
       istio-injection = "enabled"
     }
   }
+  depends_on = [
+    module.eks.cluster_name,
+    helm_release.postgresql,
+    helm_release.kafka
+  ]
 }
 
 locals {
