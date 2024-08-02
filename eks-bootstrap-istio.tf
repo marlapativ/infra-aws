@@ -102,10 +102,5 @@ resource "helm_release" "istio_gateway" {
     }
   }
 
-  set_list {
-    name  = "imagePullSecrets"
-    value = [kubernetes_secret.istio.metadata.0.name]
-  }
-
   depends_on = [time_sleep.wait_for_lb_controller, module.operations.cert_manager, module.operations.external_dns, kubernetes_namespace.istio_system, helm_release.istio_base, helm_release.istiod]
 }
