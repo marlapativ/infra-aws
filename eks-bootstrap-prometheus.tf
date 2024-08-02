@@ -28,7 +28,7 @@ resource "kubernetes_config_map" "grafana_dashboards_configs" {
   count = length(var.eks_bootstrap_grafana.dashboard_paths)
 
   provider = kubernetes
-  
+
   metadata {
     name      = trimsuffix(basename(var.eks_bootstrap_grafana.dashboard_paths[count.index]), ".json")
     namespace = kubernetes_namespace.operations.metadata.0.name
