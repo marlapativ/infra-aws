@@ -11,7 +11,6 @@ pilot:
 global:
   logAsJson: true
   proxy:
-    image: marlapativ/proxyv2:1.22.3
     excludeInboundPorts: '5432'
     excludeOutboundPorts: '5432'
     resources:
