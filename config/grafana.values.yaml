@@ -6,3 +6,12 @@ datasources:
         type: prometheus
         url: http://prometheus-kube-prometheus-prometheus.operations.svc.cluster.local:9090
         isDefault: true
+dashboardsProvider:
+  enabled: true
+dashboardsConfigMaps:
+  - configMapName: kubernetes-dashboard
+    fileName: kubernetes-dashboard.json
+  - configMapName: kafka-dashboard
+    fileName: kafka-dashboard.json
+  - configMapName: postgres-dashboard
+    fileName: postgres-dashboard.json

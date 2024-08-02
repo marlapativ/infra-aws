@@ -536,6 +536,7 @@ variable "eks_bootstrap_grafana" {
     chart             = string
     values            = optional(map(string), {})
     values_file_paths = optional(list(string), [])
+    dashboard_paths   = optional(list(string), [])
   })
 }
 

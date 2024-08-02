@@ -28,3 +28,13 @@ certmanager:
 certificate:
   dnsNames:
     - ${domain}
+
+kiali-server:
+  external_services:
+    tracing:
+      enabled: false
+    grafana:
+      enabled: true
+      in_cluster_url: http://grafana.operations.svc.cluster.local:3000
+    prometheus:
+      url: http://prometheus-kube-prometheus-prometheus.operations.svc.cluster.local:9090
