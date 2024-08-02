@@ -29,6 +29,8 @@ primary:
   extendedConfiguration: |
     log_destination = 'jsonlog'
     logging_collector = on
+    log_directory = '/opt/bitnami/postgresql/logs'
+    log_filename = 'postgresql.log'
 metrics:
   enabled: true
 image:

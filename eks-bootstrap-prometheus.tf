@@ -24,6 +24,23 @@ resource "helm_release" "prometheus" {
   depends_on = [kubernetes_namespace.operations, helm_release.fluentbit]
 }
 
+resource "kubernetes_config_map" "grafana_dashboards_configs" {
+  count = length(var.eks_bootstrap_grafana.dashboard_paths)
+
+  provider = kubernetes
+  
+  metadata {
+    name      = trimsuffix(basename(var.eks_bootstrap_grafana.dashboard_paths[count.index]), ".json")
+    namespace = kubernetes_namespace.operations.metadata.0.name
+  }
+
+  data = {
+    "${basename(var.eks_bootstrap_grafana.dashboard_paths[count.index])}" = file("${path.module}/${var.eks_bootstrap_grafana.dashboard_paths[count.index]}")
+  }
+
+  depends_on = [kubernetes_namespace.operations]
+
+}
 
 resource "helm_release" "grafana" {
   provider   = helm
@@ -43,5 +60,5 @@ resource "helm_release" "grafana" {
     }
   }
 
-  depends_on = [kubernetes_namespace.operations, helm_release.kafka, helm_release.postgresql, helm_release.prometheus]
+  depends_on = [kubernetes_config_map.grafana_dashboards_configs, helm_release.kafka, helm_release.postgresql, helm_release.prometheus]
 }
