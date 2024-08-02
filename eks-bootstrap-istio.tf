@@ -76,7 +76,12 @@ resource "helm_release" "istiod" {
     }
   }
 
-  depends_on = [kubernetes_namespace.istio_system, helm_release.istio_base, helm_release.prometheus]
+  set_list {
+    name  = "global.imagePullSecrets"
+    value = [kubernetes_secret.istio.metadata.0.name]
+  }
+
+  depends_on = [kubernetes_namespace.istio_system, helm_release.istio_base, helm_release.prometheus, kubernetes_secret.istio]
 }
 
 resource "helm_release" "istio_gateway" {
