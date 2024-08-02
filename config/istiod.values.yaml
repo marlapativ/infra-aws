@@ -7,11 +7,13 @@ pilot:
     requests:
       cpu: 500m
       memory: 1024Mi
+  image: marlapativ/pilot:1.22.3
 global:
   logAsJson: true
   proxy:
-    excludeInboundPorts: "5432"
-    excludeOutboundPorts: "5432"
+    image: marlapativ/proxyv2:1.22.3
+    excludeInboundPorts: '5432'
+    excludeOutboundPorts: '5432'
     resources:
       requests:
         cpu: 10m

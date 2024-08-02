@@ -14,6 +14,19 @@ resource "kubernetes_namespace" "istio_system" {
   depends_on = [helm_release.prometheus]
 }
 
+resource "kubernetes_secret" "istio" {
+  provider = kubernetes
+  metadata {
+    name      = "${kubernetes_namespace.istio_system.metadata.0.name}-dockerhub-secrets"
+    namespace = kubernetes_namespace.istio_system.metadata.0.name
+  }
+  data = {
+    ".dockerconfigjson" = base64decode(var.eks_bootstrap_secrets.dockerhubconfigjson)
+  }
+  type       = "kubernetes.io/dockerconfigjson"
+  depends_on = [kubernetes_namespace.istio_system]
+}
+
 resource "helm_release" "istio_base" {
   provider   = helm
   name       = var.eks_bootstrap_istio_base.name
@@ -37,7 +50,12 @@ resource "helm_release" "istio_base" {
     value = "default"
   }
 
-  depends_on = [kubernetes_namespace.istio_system, helm_release.prometheus]
+  set_list {
+    name  = "global.imagePullSecrets"
+    value = [kubernetes_secret.istio.metadata.0.name]
+  }
+
+  depends_on = [kubernetes_namespace.istio_system, helm_release.prometheus, kubernetes_secret.istio]
 }
 
 resource "helm_release" "istiod" {
@@ -77,6 +95,11 @@ resource "helm_release" "istio_gateway" {
       name  = set.key
       value = set.value
     }
+  }
+
+  set_list {
+    name  = "imagePullSecrets"
+    value = [kubernetes_secret.istio.metadata.0.name]
   }
 
   depends_on = [time_sleep.wait_for_lb_controller, module.operations.cert_manager, module.operations.external_dns, kubernetes_namespace.istio_system, helm_release.istio_base, helm_release.istiod]
