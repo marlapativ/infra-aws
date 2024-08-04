@@ -12,3 +12,11 @@ prometheus:
             - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scrape]
               action: keep
               regex: true
+        - job_name: 'consumer-stats'
+          metrics_path: /metrics
+          kubernetes_sd_configs:
+            - role: pod
+          relabel_configs:
+            - action: keep
+              sourceLabels: [__meta_kubernetes_pod_container_name]
+              regex: 'consumer.*deployment.*'
