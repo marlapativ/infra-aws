@@ -1,4 +1,4 @@
-replicaCount: 5
+replicaCount: 3
 db:
   config:
     host: 'postgresql.postgresql.svc.cluster.local'
@@ -11,7 +11,7 @@ resources:
     cpu: 500m
     memory: 384Mi
   requests:
-    cpu: 375m
+    cpu: 250m
     memory: 256Mi
 pod:
   readinessProbe:
