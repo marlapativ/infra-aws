@@ -21,6 +21,14 @@ resource "random_password" "database_password" {
   lower   = var.password_defaults.lower
 }
 
+resource "random_password" "admin_database_password" {
+  length  = var.password_defaults.length
+  special = var.password_defaults.special
+  upper   = var.password_defaults.upper
+  numeric = var.password_defaults.numeric
+  lower   = var.password_defaults.lower
+}
+
 resource "helm_release" "postgresql" {
   provider   = helm
   name       = var.eks_bootstrap_postgresql.name
@@ -55,6 +63,11 @@ resource "helm_release" "postgresql" {
   }
 
   set_sensitive {
+    name  = "auth.postgresPassword"
+    value = random_password.admin_database_password.result
+  }
+
+  set_sensitive {
     name  = "global.imagePullSecrets[0]"
     value = kubernetes_secret.postgresql.metadata.0.name
   }
@@ -67,6 +80,7 @@ resource "helm_release" "postgresql" {
   depends_on = [
     kubernetes_namespace.postgresql,
     random_password.database_password,
+    random_password.admin_database_password,
     kubernetes_storage_class.ebs,
     module.eks.cluster_name,
     helm_release.autoscaler,
