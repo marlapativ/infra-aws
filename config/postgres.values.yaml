@@ -36,3 +36,7 @@ metrics:
 image:
   repository: marlapativ/postgresql
   tag: 16.3.0-debian-12-r19
+
+serviceAccount:
+  create: true
+  automountServiceAccountToken: false

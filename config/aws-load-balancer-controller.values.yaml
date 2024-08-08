@@ -14,3 +14,10 @@ resources:
   limits:
     cpu: 200m
     memory: 200Mi
+
+serviceAccount:
+  create: true
+  automountServiceAccountToken: true
+
+rbac:
+  create: true
