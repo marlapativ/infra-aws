@@ -9,7 +9,7 @@ resources:
   limits:
     cpu: 50m
     memory: 100Mi
-  
+
 webhook:
   podDisruptionBudget:
     enabled: true
@@ -42,3 +42,7 @@ startupapicheck:
     limits:
       cpu: 50m
       memory: 100Mi
+
+serviceAccount:
+  create: true
+  automountServiceAccountToken: true

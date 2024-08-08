@@ -11,3 +11,7 @@ cluster-autoscaler:
     tag: v1.30.0
   podDisruptionBudget:
     maxUnavailable: 0
+
+serviceAccount:
+  create: true
+  automountServiceAccountToken: true

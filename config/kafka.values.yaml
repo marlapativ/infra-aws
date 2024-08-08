@@ -42,3 +42,7 @@ metrics:
     enabled: true
   jmx:
     enabled: true
+
+serviceAccount:
+  create: true
+  automountServiceAccountToken: false

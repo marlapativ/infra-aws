@@ -40,3 +40,7 @@ autoscaling:
     targetCPU: 5
     targetMemory: 5
     annotations: {}
+
+serviceAccount:
+  create: true
+  automount: false
