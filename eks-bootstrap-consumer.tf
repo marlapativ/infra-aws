@@ -51,6 +51,16 @@ resource "helm_release" "consumer" {
   }
 
   set_sensitive {
+    name  = "db.secrets.postgresUsername"
+    value = base64encode(var.eks_bootstrap_postgresql_sensitive_values.postgres_username)
+  }
+
+  set_sensitive {
+    name  = "db.secrets.postgresPassword"
+    value = base64encode(random_password.admin_database_password.result)
+  }
+
+  set_sensitive {
     name  = "kafka.secrets.username"
     value = base64encode(var.eks_bootstrap_kafka_sensitive_values.username)
   }
