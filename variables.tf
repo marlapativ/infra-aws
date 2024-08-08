@@ -265,7 +265,7 @@ variable "eks_bootstrap_postgresql_sensitive_values" {
   type = object({
     username          = string
     database          = string
-    postgres_username = optional(string, "postgres")
+    postgres_username = string
   })
 }
 
