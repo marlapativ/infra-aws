@@ -185,7 +185,11 @@ variable "eks_cluster" {
     node_groups = list(object({
       name           = string
       tags           = optional(map(string), {})
-      taints         = optional(list(object, []))
+      taints         = optional(list(object({
+        key    = string
+        value  = string
+        effect = string
+      })), [])
       ami_type       = optional(string)
       capacity_type  = optional(string, "ON_DEMAND")
       instance_types = optional(list(string), ["c3.large"])

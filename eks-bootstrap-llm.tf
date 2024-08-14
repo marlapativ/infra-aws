@@ -1,6 +1,6 @@
 
 locals {
-  llm_values_files = [for file_path in var.eks_bootstrap_llm.values_file_paths : "${file(file_path)}"]
+  llm_values_files      = [for file_path in var.eks_bootstrap_llm.values_file_paths : "${file(file_path)}"]
   ingestor_values_files = [for file_path in var.eks_bootstrap_ingestor.values_file_paths : "${file(file_path)}"]
 }
 resource "kubernetes_namespace" "llm" {
@@ -36,7 +36,7 @@ resource "kubernetes_default_service_account" "default" {
     namespace = kubernetes_namespace.llm.metadata.0.name
   }
   secret {
-    name = "${kubernetes_secret.llm.metadata.0.name}"
+    name = kubernetes_secret.llm.metadata.0.name
   }
   depends_on = [kubernetes_namespace.llm, kubernetes_secret.llm]
 }
