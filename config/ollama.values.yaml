@@ -1,0 +1,22 @@
+ollama:
+  enabled: true
+  fullnameOverride: 'open-webui-ollama'
+  ollama:
+    gpu:
+      enabled: true
+      type: 'nvidia'
+      number: 1
+      models:
+        - gemma:2b
+        - mxbai-embed-large:latest
+  runtimeClassName: nvidia
+pipelines:
+  enabled: true
+  image:
+    repository: marlapativ/pipelines
+    tag: 1.2.0
+    pullPolicy: Always
+tolerations:
+  - key: 'nvidia.com/gpu'
+    operator: 'Exists'
+    effect: 'NoSchedule'

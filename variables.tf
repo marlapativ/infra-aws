@@ -185,6 +185,7 @@ variable "eks_cluster" {
     node_groups = list(object({
       name           = string
       tags           = optional(map(string), {})
+      taints         = optional(list(object, []))
       ami_type       = optional(string)
       capacity_type  = optional(string, "ON_DEMAND")
       instance_types = optional(list(string), ["c3.large"])
@@ -631,4 +632,50 @@ variable "email" {
 variable "wait_duration_aws_load_balancer_controller" {
   type    = string
   default = "5m"
+}
+
+variable "eks_bootstrap_llm" {
+  type = object({
+    name              = string
+    version           = optional(string, null)
+    namespace         = optional(string, "llm")
+    repository        = optional(string, null)
+    chart             = string
+    values            = optional(map(string), {})
+    values_file_paths = optional(list(string), [])
+  })
+}
+
+variable "eks_bootstrap_llm_limit_range" {
+  type = list(object({
+    type            = string
+    default         = optional(map(string), null)
+    default_request = optional(map(string), null)
+    min             = optional(map(string), null)
+    max             = optional(map(string), null)
+  }))
+
+  default = [{
+    type = "Container"
+    default = {
+      cpu    = "500m"
+      memory = "1Gi"
+    }
+    default_request = {
+      cpu    = "500m"
+      memory = "1Gi"
+    }
+  }]
+}
+
+variable "eks_bootstrap_ingestor" {
+  type = object({
+    name              = string
+    version           = optional(string, null)
+    namespace         = optional(string, "llm")
+    repository        = optional(string, null)
+    chart             = string
+    values            = optional(map(string), {})
+    values_file_paths = optional(list(string), [])
+  })
 }

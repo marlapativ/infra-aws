@@ -26,6 +26,12 @@ primary:
           - namespaceSelector:
               matchLabels:
                 kubernetes.io/metadata.name: operations
+      - ports:
+          - port: 5432
+        from:
+          - namespaceSelector:
+              matchLabels:
+                kubernetes.io/metadata.name: llm
   extendedConfiguration: |
     log_destination = 'jsonlog'
     logging_collector = on
