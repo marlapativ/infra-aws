@@ -42,6 +42,25 @@ resource "kubernetes_config_map" "grafana_dashboards_configs" {
 
 }
 
+
+resource "kubernetes_config_map" "grafana_ini_config" {
+  provider = kubernetes
+
+  metadata {
+    name      = "grafana-ini-config"
+    namespace = kubernetes_namespace.operations.metadata.0.name
+  }
+
+  data = {
+    "grafana.ini" = templatefile("${path.module}/${var.eks_bootstrap_grafana.ini_config_path}", {
+      url = "https://${var.domain}/grafana"
+      serve_from_sub_path = true
+    })
+  }
+
+  depends_on = [kubernetes_namespace.operations]
+}
+
 resource "helm_release" "grafana" {
   provider   = helm
   name       = var.eks_bootstrap_grafana.name
@@ -58,6 +77,11 @@ resource "helm_release" "grafana" {
       name  = set.key
       value = set.value
     }
+  }
+
+  set {
+    name  = "config.grafanaIniConfigMap"
+    value = kubernetes_config_map.grafana_ini_config.metadata.0.name
   }
 
   depends_on = [kubernetes_config_map.grafana_dashboards_configs, helm_release.kafka, helm_release.postgresql, helm_release.prometheus]

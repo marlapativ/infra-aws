@@ -8,6 +8,16 @@ istio:
     virtualservice:
       hosts:
         - ${domain}
+      http:
+        - name: 'grafana'
+          match:
+            - uri:
+                prefix: /grafana
+          route:
+            - destination:
+                port:
+                  number: 3000
+                host: grafana.operations.svc.cluster.local
       tls:
         - match:
             - port: 443
