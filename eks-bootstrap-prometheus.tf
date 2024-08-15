@@ -53,7 +53,7 @@ resource "kubernetes_config_map" "grafana_ini_config" {
 
   data = {
     "grafana.ini" = templatefile("${path.module}/${var.eks_bootstrap_grafana.ini_config_path}", {
-      url = "https://${var.domain}/grafana"
+      url                 = "https://${var.domain}/grafana"
       serve_from_sub_path = true
     })
   }
