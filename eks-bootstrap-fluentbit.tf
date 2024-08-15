@@ -25,6 +25,19 @@ resource "kubernetes_namespace" "fluentbit" {
   depends_on = [module.eks, helm_release.autoscaler]
 }
 
+resource "kubernetes_secret" "fluentbit" {
+  provider = kubernetes
+  metadata {
+    name      = "dockerhub-pull-secrets"
+    namespace = kubernetes_namespace.fluentbit.metadata.0.name
+  }
+  data = {
+    ".dockerconfigjson" = base64decode(var.eks_bootstrap_secrets.dockerhubconfigjson)
+  }
+  type       = "kubernetes.io/dockerconfigjson"
+  depends_on = [kubernetes_namespace.fluentbit]
+}
+
 resource "helm_release" "fluentbit" {
   provider   = helm
   name       = var.eks_bootstrap_fluentbit.name
@@ -42,6 +55,7 @@ resource "helm_release" "fluentbit" {
 
   depends_on = [
     kubernetes_namespace.fluentbit,
+    kubernetes_secret.fluentbit,
     module.eks.cluster_name,
     helm_release.autoscaler
   ]

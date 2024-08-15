@@ -13,7 +13,7 @@ resource "kubernetes_namespace" "autoscaler" {
 resource "kubernetes_secret" "autoscaler" {
   provider = kubernetes
   metadata {
-    name      = "${kubernetes_namespace.autoscaler.metadata.0.name}-dockerhub-secrets"
+    name      = "dockerhub-pull-secrets"
     namespace = kubernetes_namespace.autoscaler.metadata.0.name
   }
   data = {
@@ -97,6 +97,7 @@ resource "helm_release" "autoscaler" {
 
   depends_on = [
     kubernetes_namespace.autoscaler,
+    kubernetes_secret.autoscaler,
     module.eks.cluster_name,
     module.irsa-ca
   ]

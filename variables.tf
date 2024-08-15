@@ -183,9 +183,9 @@ variable "eks_cluster" {
       "scheduler"
     ])
     node_groups = list(object({
-      name           = string
-      tags           = optional(map(string), {})
-      taints         = optional(map(object({
+      name = string
+      tags = optional(map(string), {})
+      taints = optional(map(object({
         key    = string
         value  = string
         effect = string

@@ -1,3 +1,7 @@
+locals {
+  consumer_values_files = [for file_path in var.eks_bootstrap_consumer.values_file_paths : "${file(file_path)}"]
+}
+
 resource "kubernetes_namespace" "consumer" {
   provider = kubernetes
   metadata {
@@ -13,8 +17,17 @@ resource "kubernetes_namespace" "consumer" {
   ]
 }
 
-locals {
-  consumer_values_files = [for file_path in var.eks_bootstrap_consumer.values_file_paths : "${file(file_path)}"]
+resource "kubernetes_secret" "consumer" {
+  provider = kubernetes
+  metadata {
+    name      = "dockerhub-pull-secrets"
+    namespace = kubernetes_namespace.consumer.metadata.0.name
+  }
+  data = {
+    ".dockerconfigjson" = base64decode(var.eks_bootstrap_secrets.dockerhubconfigjson)
+  }
+  type       = "kubernetes.io/dockerconfigjson"
+  depends_on = [kubernetes_namespace.consumer]
 }
 
 resource "helm_release" "consumer" {
@@ -75,7 +88,12 @@ resource "helm_release" "consumer" {
     value = var.eks_bootstrap_secrets.dockerhubconfigjson
   }
 
-  depends_on = [kubernetes_namespace.consumer, helm_release.kafka, helm_release.postgresql]
+  depends_on = [
+    kubernetes_namespace.consumer, 
+    kubernetes_secret.consumer,
+    helm_release.kafka, 
+    helm_release.postgresql
+  ]
 }
 
 resource "kubernetes_limit_range" "consumer" {

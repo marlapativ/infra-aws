@@ -16,7 +16,7 @@ resource "kubernetes_namespace" "kafka" {
 resource "kubernetes_secret" "kafka" {
   provider = kubernetes
   metadata {
-    name      = "${kubernetes_namespace.kafka.metadata.0.name}-dockerhub-secrets"
+    name      = "dockerhub-pull-secrets"
     namespace = kubernetes_namespace.kafka.metadata.0.name
   }
   data = {
@@ -103,5 +103,5 @@ resource "kubernetes_limit_range" "kafka" {
     }
   }
 
-  depends_on = [kubernetes_namespace.kafka]
+  depends_on = [kubernetes_namespace.kafka, kubernetes_secret.kafka]
 }

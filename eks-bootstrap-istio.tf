@@ -17,7 +17,7 @@ resource "kubernetes_namespace" "istio_system" {
 resource "kubernetes_secret" "istio" {
   provider = kubernetes
   metadata {
-    name      = "${kubernetes_namespace.istio_system.metadata.0.name}-dockerhub-secrets"
+    name      = "dockerhub-pull-secrets"
     namespace = kubernetes_namespace.istio_system.metadata.0.name
   }
   data = {

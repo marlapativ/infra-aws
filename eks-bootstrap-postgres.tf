@@ -13,6 +13,19 @@ resource "kubernetes_namespace" "postgresql" {
   depends_on = [module.eks, helm_release.istiod, helm_release.kafka]
 }
 
+resource "kubernetes_secret" "postgresql" {
+  provider = kubernetes
+  metadata {
+    name      = "dockerhub-pull-secrets"
+    namespace = kubernetes_namespace.postgresql.metadata.0.name
+  }
+  data = {
+    ".dockerconfigjson" = base64decode(var.eks_bootstrap_secrets.dockerhubconfigjson)
+  }
+  type       = "kubernetes.io/dockerconfigjson"
+  depends_on = [kubernetes_namespace.postgresql]
+}
+
 resource "random_password" "database_password" {
   length  = var.password_defaults.length
   special = var.password_defaults.special
@@ -82,6 +95,7 @@ resource "helm_release" "postgresql" {
     random_password.database_password,
     random_password.admin_database_password,
     kubernetes_storage_class.ebs,
+    kubernetes_secret.postgresql,
     module.eks.cluster_name,
     helm_release.autoscaler,
     helm_release.istiod,
@@ -110,18 +124,5 @@ resource "kubernetes_limit_range" "postgresql" {
     }
   }
 
-  depends_on = [kubernetes_namespace.postgresql]
-}
-
-resource "kubernetes_secret" "postgresql" {
-  provider = kubernetes
-  metadata {
-    name      = "${kubernetes_namespace.postgresql.metadata.0.name}-dockerhub-secrets"
-    namespace = kubernetes_namespace.postgresql.metadata.0.name
-  }
-  data = {
-    ".dockerconfigjson" = base64decode(var.eks_bootstrap_secrets.dockerhubconfigjson)
-  }
-  type       = "kubernetes.io/dockerconfigjson"
   depends_on = [kubernetes_namespace.postgresql]
 }

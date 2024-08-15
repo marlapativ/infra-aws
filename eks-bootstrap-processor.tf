@@ -18,6 +18,19 @@ resource "kubernetes_namespace" "processor" {
   ]
 }
 
+resource "kubernetes_secret" "processor" {
+  provider = kubernetes
+  metadata {
+    name      = "dockerhub-pull-secrets"
+    namespace = kubernetes_namespace.processor.metadata.0.name
+  }
+  data = {
+    ".dockerconfigjson" = base64decode(var.eks_bootstrap_secrets.dockerhubconfigjson)
+  }
+  type       = "kubernetes.io/dockerconfigjson"
+  depends_on = [kubernetes_namespace.processor]
+}
+
 resource "kubernetes_limit_range" "processor" {
   count = length(var.eks_bootstrap_processor_limit_range) > 0 ? 1 : 0
 
@@ -65,6 +78,8 @@ resource "helm_release" "cve_operator" {
 
   depends_on = [
     module.eks.cluster_name,
+    kubernetes_namespace.processor,
+    kubernetes_secret.processor,
     helm_release.postgresql,
     helm_release.kafka
   ]

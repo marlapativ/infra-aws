@@ -7,6 +7,19 @@ resource "kubernetes_namespace" "operations" {
   depends_on = [helm_release.fluentbit]
 }
 
+resource "kubernetes_secret" "operations" {
+  provider = kubernetes
+  metadata {
+    name      = "dockerhub-pull-secrets"
+    namespace = kubernetes_namespace.operations.metadata.0.name
+  }
+  data = {
+    ".dockerconfigjson" = base64decode(var.eks_bootstrap_secrets.dockerhubconfigjson)
+  }
+  type       = "kubernetes.io/dockerconfigjson"
+  depends_on = [kubernetes_namespace.operations]
+}
+
 locals {
   lb_controller_values_files = [for file_path in var.eks_bootstrap_operations.aws_load_balancer_controller_values_file_paths : "${file(file_path)}"]
 

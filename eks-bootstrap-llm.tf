@@ -13,15 +13,15 @@ resource "kubernetes_namespace" "llm" {
   }
   depends_on = [
     module.eks.cluster_name,
-    helm_release.postgresql,
-    helm_release.kafka
+    helm_release.cluster_operations,
+    helm_release.postgresql
   ]
 }
 
 resource "kubernetes_secret" "llm" {
   provider = kubernetes
   metadata {
-    name      = "${kubernetes_namespace.llm.metadata.0.name}-dockerhub-secrets"
+    name      = "dockerhub-pull-secrets"
     namespace = kubernetes_namespace.llm.metadata.0.name
   }
   data = {
@@ -35,7 +35,7 @@ resource "kubernetes_default_service_account" "default" {
   metadata {
     namespace = kubernetes_namespace.llm.metadata.0.name
   }
-  secret {
+  image_pull_secret {
     name = kubernetes_secret.llm.metadata.0.name
   }
   depends_on = [kubernetes_namespace.llm, kubernetes_secret.llm]
@@ -59,12 +59,12 @@ resource "helm_release" "ollama" {
     }
   }
 
-  set_sensitive {
-    name  = "secrets.dockerhubconfigjson"
-    value = var.eks_bootstrap_secrets.dockerhubconfigjson
-  }
-
-  depends_on = [kubernetes_namespace.llm, helm_release.kafka, helm_release.postgresql]
+  depends_on = [
+    kubernetes_namespace.llm,
+    kubernetes_secret.llm,
+    kubernetes_default_service_account.default,
+    helm_release.postgresql
+  ]
 }
 
 
