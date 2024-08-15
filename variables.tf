@@ -185,11 +185,11 @@ variable "eks_cluster" {
     node_groups = list(object({
       name           = string
       tags           = optional(map(string), {})
-      taints         = optional(list(object({
+      taints         = optional(map(object({
         key    = string
         value  = string
         effect = string
-      })), [])
+      })), {})
       ami_type       = optional(string)
       capacity_type  = optional(string, "ON_DEMAND")
       instance_types = optional(list(string), ["c3.large"])
@@ -543,6 +543,7 @@ variable "eks_bootstrap_grafana" {
     values            = optional(map(string), {})
     values_file_paths = optional(list(string), [])
     dashboard_paths   = optional(list(string), [])
+    ini_config_path   = string
   })
 }
 

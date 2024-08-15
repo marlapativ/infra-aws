@@ -1,6 +1,6 @@
 locals {
   node_groups = {
-    for idx, prop in var.eks_cluster.node_groups : prop.name => merge(prop, { subnet_ids = [aws_subnet.private[idx].id] })
+    for idx, prop in var.eks_cluster.node_groups : prop.name => merge(prop, { subnet_ids = [aws_subnet.private[idx % length(aws_subnet.private)].id] })
   }
 }
 module "eks" {
