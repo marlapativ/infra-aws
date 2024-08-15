@@ -9,14 +9,44 @@ ollama:
       models:
         - gemma:2b
         - mxbai-embed-large:latest
-  runtimeClassName: nvidia
+  resources:
+    requests:
+      memory: 4096Mi
+      cpu: 2000m
+    limits:
+      memory: 7000Mi
+      cpu: 3500m
+  persistentVolume:
+    enabled: true
+  tolerations:
+    - key: 'nvidia.com/gpu'
+      operator: 'Exists'
+      effect: 'NoSchedule'
 pipelines:
   enabled: true
   image:
     repository: marlapativ/pipelines
-    tag: 1.2.0
+    tag: v1.2.1
     pullPolicy: Always
+  tolerations:
+    - key: 'nvidia.com/gpu'
+      operator: 'Exists'
+      effect: 'NoSchedule'
+  resources:
+    requests:
+      memory: 256Mi
+      cpu: 250m
+    limits:
+      memory: 512Mi
+      cpu: 500m
 tolerations:
   - key: 'nvidia.com/gpu'
     operator: 'Exists'
     effect: 'NoSchedule'
+resources:
+  requests:
+    memory: 256Mi
+    cpu: 250m
+  limits:
+    memory: 512Mi
+    cpu: 500m
