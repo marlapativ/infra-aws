@@ -89,9 +89,9 @@ resource "helm_release" "consumer" {
   }
 
   depends_on = [
-    kubernetes_namespace.consumer, 
+    kubernetes_namespace.consumer,
     kubernetes_secret.consumer,
-    helm_release.kafka, 
+    helm_release.kafka,
     helm_release.postgresql
   ]
 }
